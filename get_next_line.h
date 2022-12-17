@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:55 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/16 16:27:00 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/17 23:09:15 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <fcntl.h>
 
 # ifndef BUFFERSIZE
-#  define BUFFERSIZE 145
+#  define BUFFERSIZE 10
 # endif
 
 size_t	ft_strlen(char *str);
