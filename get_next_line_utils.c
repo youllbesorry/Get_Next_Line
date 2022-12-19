@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:52 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/18 12:05:19 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/19 18:15:33 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
-char	*ft_strcat(char *dest, char *src)
+char	*ft_strncat(char *dest, char *src)
 {
 	size_t	i;
 	size_t	j;
@@ -31,7 +31,7 @@ char	*ft_strcat(char *dest, char *src)
 	while (dest[i] != '\0')
 		i++;
 	j = 0;
-	while (src[j] != '\0')
+	while (src[j] != '\0' && src[j - 1] != '\n')
 	{
 		dest[i] = src[j];
 		i++;
@@ -51,21 +51,19 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!str)
 		return (NULL);
 	*str = '\0';
-	ft_strcat(str, s1);
-	return (ft_strcat(str, s2));
+	ft_strncat(str, s1);
+	return (free(s1), ft_strncat(str, s2));
 }
 
-size_t	ft_strchr(char *s, int c)
+ssize_t	ft_strchr(char *s, int c, size_t i)
 {
 	size_t	len;
-	size_t	i;
 
-	i = 0;
 	len = ft_strlen(s);
 	while (len + 1)
 	{
 		if (s[i] == c)
-			return (i - len + 1);
+			return (len - i);
 		i++;
 		len--;
 	}

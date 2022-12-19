@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/18 12:09:44 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/19 18:17:41 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,17 @@
 
 char	*get_line(int fd)
 {
-	ssize_t		size;
+	size_t		size;
 	char		*str;
 	static char	buff[BUFFERSIZE];
-	size_t		i;
 
-	str = NULL;
-	size = 1;
-	str = malloc((sizeof (char)) * BUFFERSIZE + 1);
-	size = read(fd, str, BUFFERSIZE);
-	i = ft_strchr(str, '\n');
-	while (i == 0)
+	str = malloc((sizeof (char)));
+	size = read(fd, buff, BUFFERSIZE);
+	while (ft_strchr(buff, '\0', 0) < 0 && ft_strchr(buff, '\n', 0) < 0)
 	{
 		str = ft_strjoin(str, buff);
-		size = i - read(fd, buff, BUFFERSIZE);
-		i++;
+		str[size] = '\0';
+		size += read(fd, buff, BUFFERSIZE);
 	}
 	return (str);
 }
@@ -45,11 +41,36 @@ int	main(void)
 {
 	int		fd;
 	char	*next_line;
+	int		i;
 
 	fd = open("test.txt", O_RDONLY);
-	next_line = get_next_line(fd);
-	printf("%s\n", next_line);
+	//next_line = get_next_line(fd);
+	i = 0;
+	while (i < 3)
+	{
+		next_line = get_next_line(fd);
+		printf("Test =  %s\n", next_line);
+		//free(next_line);
+		i++;
+	}
 	free(next_line);
 	close(fd);
 	return (0);
 }
+/*int    main(void)
+{
+    int    fd;
+    char    *line;
+
+    fd = open("test.txt", O_RDONLY);
+    line = get_next_line(fd);
+    while(line)
+    {
+        free(line);
+        line = get_next_line(fd);
+        printf("%s", line);
+    }
+    free(line);
+    close(fd);
+    return (0);
+}*/
