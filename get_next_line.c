@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/18 00:05:37 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/18 12:09:44 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ char	*get_line(int fd)
 
 	str = NULL;
 	size = 1;
-	i = 0;
 	str = malloc((sizeof (char)) * BUFFERSIZE + 1);
 	size = read(fd, str, BUFFERSIZE);
-	while (str[i] != '\n')
+	i = ft_strchr(str, '\n');
+	while (i == 0)
 	{
 		str = ft_strjoin(str, buff);
-		size += read(fd, buff, BUFFERSIZE);
+		size = i - read(fd, buff, BUFFERSIZE);
 		i++;
 	}
 	return (str);
