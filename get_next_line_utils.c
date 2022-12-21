@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:52 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/19 18:15:33 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/21 15:42:45 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	*ft_strncat(char *dest, char *src)
 	while (dest[i] != '\0')
 		i++;
 	j = 0;
-	while (src[j] != '\0' && src[j - 1] != '\n')
+	while (src[j] != '\0')
 	{
 		dest[i] = src[j];
 		i++;
@@ -55,25 +55,19 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (free(s1), ft_strncat(str, s2));
 }
 
-ssize_t	ft_strchr(char *s, int c, size_t i)
+ssize_t	ft_strchr(char *s, int c)
 {
 	size_t	len;
+	size_t	i;
 
-	len = ft_strlen(s);
-	while (len + 1)
+	i = 0;
+	len = ft_strlen(s) + 1;
+	while (len)
 	{
 		if (s[i] == c)
-			return (len - i);
+			return (1);
 		i++;
 		len--;
 	}
-	return (-1);
+	return (0);
 }
-
-// int	main(void)
-// {
-// 	char	str[] = "premiere ligne\n";
-
-// 	printf("%ld \n", ft_strchr(str, '\n'));
-// 	return (0);
-// }

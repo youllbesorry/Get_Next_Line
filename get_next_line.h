@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:55 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/19 17:29:40 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/21 15:19:57 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 size_t	ft_strlen(char *str);
 char	*ft_strjoin(char *s1, char *s2);
-ssize_t	ft_strchr(char *s, int c, size_t i);
+ssize_t	ft_strchr(char *s, int c);
+char	*get_next_line(int fd);
 
 #endif

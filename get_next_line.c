@@ -6,71 +6,149 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/19 18:17:41 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/21 15:45:18 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_line(int fd)
+char	*clear_save(char *line, char *save)
 {
-	size_t		size;
-	char		*str;
-	static char	buff[BUFFERSIZE];
+	size_t	len_str;
+	size_t	i;
+	size_t	j;
+	char	*str;
 
-	str = malloc((sizeof (char)));
-	size = read(fd, buff, BUFFERSIZE);
-	while (ft_strchr(buff, '\0', 0) < 0 && ft_strchr(buff, '\n', 0) < 0)
+	i = 0;
+	j = 0;
+	len_str = 0;
+	while (save[i] != '\n')
+		i++;
+	len_str = ft_strlen(save) - ft_strlen(line);
+	str = malloc((sizeof (char) * len_str + 1));
+	if (!str)
+		return (NULL);
+	while (save[i + 1] != '\0')
 	{
-		str = ft_strjoin(str, buff);
-		str[size] = '\0';
-		size += read(fd, buff, BUFFERSIZE);
+		str[j] = save[i + 1];
+		i++;
+		j++;
 	}
+	str[j] = '\0';
 	return (str);
+}
+
+void	clear_buff(char *buff, char *save)
+{
+	//size_t	len_str;
+	size_t	i;
+	size_t	j;
+	//char	*str;
+
+	i = 0;
+	j = 0;
+	//len_str = 0;
+	while (buff[i] != '\n')
+		i++;
+	//len_str = ft_strlen(save) - ft_strlen(line);
+	//str = malloc((sizeof (char) * len_str + 1));
+	//if (!str)
+	//	return (NULL);
+	while (buff[i + 1] != '\0')
+	{
+		buff[j] = buff[i + 1];
+		i++;
+		j++;
+	}
+	buff[j] = '\0';
+	//return (str);
+}
+
+char	*get_line(char *line, char *save)
+{
+	size_t	i;
+
+	i = 0;
+	while (save[i] != '\n')
+	{
+		line[i] = save[i];
+		i++;
+	}
+	if (save[i] == '\n')
+	{
+		line[i] = save[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
 }
 
 char	*get_next_line(int fd)
 {
-	char	*line;
+	char			buff[BUFFERSIZE + 1];
+	static char		*save;
+	char			*line;
+	size_t			cursor;
+	static int		already = 0;
 
-	line = get_line(fd);
-	return (line);
-}
-
-int	main(void)
-{
-	int		fd;
-	char	*next_line;
-	int		i;
-
-	fd = open("test.txt", O_RDONLY);
-	//next_line = get_next_line(fd);
-	i = 0;
-	while (i < 3)
+	cursor = 1;
+	if (!already)
 	{
-		next_line = get_next_line(fd);
-		printf("Test =  %s\n", next_line);
-		//free(next_line);
-		i++;
+		save = malloc((sizeof (char)));
+		already = 1;
 	}
-	free(next_line);
-	close(fd);
-	return (0);
+	while (cursor != 0 || cursor == -1)
+	{
+		cursor = read(fd, buff, BUFFERSIZE);
+		save = ft_strjoin(save, buff);
+		if (ft_strchr(save, '\n') == 1)
+		{
+			line = malloc((sizeof (char)) * ft_strlen(save));
+			if (!line)
+				return (NULL);
+			line = get_line(line, save);
+			save = clear_save(line, save);
+			if (!save)
+				return (NULL);
+			return (line);
+		}
+	}
+	return (NULL);
 }
-/*int    main(void)
+
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*next_line;
+
+// 	fd = open("test.txt", O_RDONLY);
+// 	while (next_line)
+// 	{
+// 		next_line = get_next_line(fd);
+// 		if (!next_line)
+// 			break ;
+// 		printf("Test =  '%s'\n", next_line);
+// 		free(next_line);
+// 	}
+// 	//free(next_line);
+// 	close(fd);
+// 	return (0);
+// }
+int    main(void)
 {
     int    fd;
     char    *line;
 
     fd = open("test.txt", O_RDONLY);
     line = get_next_line(fd);
+	printf("%s", line);
     while(line)
     {
-        free(line);
         line = get_next_line(fd);
         printf("%s", line);
+        free(line);
     }
     free(line);
     close(fd);
     return (0);
-}*/
+}
