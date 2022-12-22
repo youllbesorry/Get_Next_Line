@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/21 15:45:18 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/21 20:42:49 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,20 @@ char	*clear_save(char *line, char *save)
 	i = 0;
 	j = 0;
 	len_str = 0;
-	while (save[i] != '\n')
+	while (save[i] != '\n' && save[i])
 		i++;
 	len_str = ft_strlen(save) - ft_strlen(line);
 	str = malloc((sizeof (char) * len_str + 1));
 	if (!str)
 		return (NULL);
-	while (save[i + 1] != '\0')
+	while (save[i + 1] != '\n' && save[i])
 	{
 		str[j] = save[i + 1];
 		i++;
 		j++;
 	}
 	str[j] = '\0';
-	return (str);
+	return (free(save), str);
 }
 
 void	clear_buff(char *buff, char *save)
@@ -69,7 +69,7 @@ char	*get_line(char *line, char *save)
 	size_t	i;
 
 	i = 0;
-	while (save[i] != '\n')
+	while (save[i] != '\n' && save[i])
 	{
 		line[i] = save[i];
 		i++;
@@ -86,22 +86,24 @@ char	*get_line(char *line, char *save)
 char	*get_next_line(int fd)
 {
 	char			buff[BUFFERSIZE + 1];
-	static char		*save;
+	char			*save;
 	char			*line;
-	size_t			cursor;
+	ssize_t			cursor;
 	static int		already = 0;
 
 	cursor = 1;
 	if (!already)
 	{
 		save = malloc((sizeof (char)));
+		if (!save)
+			return (NULL);
 		already = 1;
 	}
-	while (cursor != 0 || cursor == -1)
+	while (cursor != 0 && cursor != -1)
 	{
 		cursor = read(fd, buff, BUFFERSIZE);
 		save = ft_strjoin(save, buff);
-		if (ft_strchr(save, '\n') == 1)
+		if (ft_strchr(save, '\n') == 1 || cursor < 1)
 		{
 			line = malloc((sizeof (char)) * ft_strlen(save));
 			if (!line)
@@ -138,15 +140,19 @@ int    main(void)
 {
     int    fd;
     char    *line;
+	int		i;
 
+	i = 0;
     fd = open("test.txt", O_RDONLY);
     line = get_next_line(fd);
 	printf("%s", line);
     while(line)
     {
+        free(line);
         line = get_next_line(fd);
         printf("%s", line);
-        free(line);
+		//line = NULL;
+		i++;
     }
     free(line);
     close(fd);
