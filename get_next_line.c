@@ -6,77 +6,49 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/21 20:42:49 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/22 09:31:27 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*clear_save(char *line, char *save)
+char	*clear_stash(char *stash)
 {
-	size_t	len_str;
 	size_t	i;
 	size_t	j;
 	char	*str;
 
 	i = 0;
-	j = 0;
-	len_str = 0;
-	while (save[i] != '\n' && save[i])
+	while (stash[i] != '\n' && stash[i])
 		i++;
-	len_str = ft_strlen(save) - ft_strlen(line);
-	str = malloc((sizeof (char) * len_str + 1));
+	str = malloc((sizeof (char)) * i + 1);
 	if (!str)
 		return (NULL);
-	while (save[i + 1] != '\n' && save[i])
+	j = 0;
+	i++;
+	while (stash[i])
 	{
-		str[j] = save[i + 1];
+		str[j] = stash[i];
 		i++;
 		j++;
 	}
 	str[j] = '\0';
-	return (free(save), str);
+	return (str);
 }
 
-void	clear_buff(char *buff, char *save)
-{
-	//size_t	len_str;
-	size_t	i;
-	size_t	j;
-	//char	*str;
-
-	i = 0;
-	j = 0;
-	//len_str = 0;
-	while (buff[i] != '\n')
-		i++;
-	//len_str = ft_strlen(save) - ft_strlen(line);
-	//str = malloc((sizeof (char) * len_str + 1));
-	//if (!str)
-	//	return (NULL);
-	while (buff[i + 1] != '\0')
-	{
-		buff[j] = buff[i + 1];
-		i++;
-		j++;
-	}
-	buff[j] = '\0';
-	//return (str);
-}
-
-char	*get_line(char *line, char *save)
+char	*get_line(char *line, char *stash)
 {
 	size_t	i;
 
 	i = 0;
-	while (save[i] != '\n' && save[i])
+	while (stash[i] && stash[i] != '\n')
 	{
-		line[i] = save[i];
+		line[i] = stash[i];
 		i++;
 	}
-	if (save[i] == '\n')
+	if (stash[i] == '\n')
 	{
-		line[i] = save[i];
+		line[i] = '\n';
 		i++;
 	}
 	line[i] = '\0';
@@ -85,76 +57,45 @@ char	*get_line(char *line, char *save)
 
 char	*get_next_line(int fd)
 {
-	char			buff[BUFFERSIZE + 1];
-	char			*save;
-	char			*line;
-	ssize_t			cursor;
-	static int		already = 0;
+	static char	*stash = "";
+	char		buff[BUFFERSIZE + 1];
+	char		*line;
+	ssize_t		cursor;
 
 	cursor = 1;
-	if (!already)
-	{
-		save = malloc((sizeof (char)));
-		if (!save)
-			return (NULL);
-		already = 1;
-	}
-	while (cursor != 0 && cursor != -1)
+	while ((cursor > 0))
 	{
 		cursor = read(fd, buff, BUFFERSIZE);
-		save = ft_strjoin(save, buff);
-		if (ft_strchr(save, '\n') == 1 || cursor < 1)
+		buff[cursor] = '\0';
+		stash = ft_strjoin(stash, buff);
+		if (ft_strchr(stash, '\n'))
 		{
-			line = malloc((sizeof (char)) * ft_strlen(save));
-			if (!line)
-				return (NULL);
-			line = get_line(line, save);
-			save = clear_save(line, save);
-			if (!save)
-				return (NULL);
+			line = malloc((sizeof (char)) * ft_linelen(stash) + 1);
+			line = get_line(line, stash);
+			stash = clear_stash(stash);
 			return (line);
 		}
 	}
 	return (NULL);
 }
 
-// int	main(void)
-// {
-// 	int		fd;
-// 	char	*next_line;
-
-// 	fd = open("test.txt", O_RDONLY);
-// 	while (next_line)
-// 	{
-// 		next_line = get_next_line(fd);
-// 		if (!next_line)
-// 			break ;
-// 		printf("Test =  '%s'\n", next_line);
-// 		free(next_line);
-// 	}
-// 	//free(next_line);
-// 	close(fd);
-// 	return (0);
-// }
-int    main(void)
+int	main(void)
 {
-    int    fd;
-    char    *line;
+	int		fd;
+	char	*line;
 	int		i;
 
 	i = 0;
-    fd = open("test.txt", O_RDONLY);
-    line = get_next_line(fd);
+	fd = open("test.txt", O_RDONLY);
+	line = get_next_line(fd);
 	printf("%s", line);
-    while(line)
-    {
-        free(line);
-        line = get_next_line(fd);
-        printf("%s", line);
-		//line = NULL;
-		i++;
-    }
-    free(line);
-    close(fd);
-    return (0);
+	while (line)
+	{
+		free(line);
+		line = get_next_line(fd);
+		printf("%s", line);
+	}
+	free(line);
+	close(fd);
+	return (0);
 }
