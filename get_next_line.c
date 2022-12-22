@@ -6,96 +6,89 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/22 09:31:27 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/22 17:10:22 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*clear_stash(char *stash)
+void	clear_buff(char *buff)
 {
 	size_t	i;
-	size_t	j;
-	char	*str;
+	size_t	len;
 
 	i = 0;
-	while (stash[i] != '\n' && stash[i])
-		i++;
-	str = malloc((sizeof (char)) * i + 1);
-	if (!str)
-		return (NULL);
-	j = 0;
-	i++;
-	while (stash[i])
+	len = ft_strchr(buff, '\n') + 1;
+	while (buff[i] && buff[i + len])
 	{
-		str[j] = stash[i];
+		buff[i] = buff[i + len];
 		i++;
-		j++;
 	}
-	str[j] = '\0';
-	return (str);
+	buff[i] = '\0';
 }
 
-char	*get_line(char *line, char *stash)
-{
-	size_t	i;
-
-	i = 0;
-	while (stash[i] && stash[i] != '\n')
-	{
-		line[i] = stash[i];
-		i++;
-	}
-	if (stash[i] == '\n')
-	{
-		line[i] = '\n';
-		i++;
-	}
-	line[i] = '\0';
-	return (line);
-}
+// char	*get_line(char *line, char *stash)
+// {
+// }
 
 char	*get_next_line(int fd)
 {
-	static char	*stash = "";
-	char		buff[BUFFERSIZE + 1];
-	char		*line;
+	static char	buff[BUFFERSIZE + 1];
 	ssize_t		cursor;
+	char		*line;
 
 	cursor = 1;
-	while ((cursor > 0))
+	if (fd < 0 || read(fd, 0, 0) > 0 || BUFFERSIZE < 1)
+		return (buff[0] = 0, NULL);
+	line = malloc((sizeof (char)));
+	if (!line)
+		return (NULL);
+	line[0] = '\0';
+	while (cursor)
 	{
-		cursor = read(fd, buff, BUFFERSIZE);
-		buff[cursor] = '\0';
-		stash = ft_strjoin(stash, buff);
-		if (ft_strchr(stash, '\n'))
+		if (buff[0] == 0)
 		{
-			line = malloc((sizeof (char)) * ft_linelen(stash) + 1);
-			line = get_line(line, stash);
-			stash = clear_stash(stash);
-			return (line);
+			cursor = read(fd, buff, BUFFERSIZE);
+			if (cursor == -1)
+				return (NULL);
+			buff[cursor] = '\0';
 		}
+		if (ft_strchr(buff, '\n') == -1 && ft_strchr(line, '\n') == -1)
+		{
+			line = ft_strnjoin(line, buff, BUFFERSIZE);
+			if (!line)
+				return (NULL);
+			buff[0] = '\0';
+			continue ;
+		}
+		line = ft_strnjoin(line, buff, ft_strchr(buff, '\n'));
+		if (!line)
+			return (free(line), NULL);
+		clear_buff(buff);
+		return (line);
 	}
-	return (NULL);
+	if (line[0] == 0)
+		return (free(line), NULL);
+	else
+		return (line);
 }
 
-int	main(void)
-{
-	int		fd;
-	char	*line;
-	int		i;
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
+// 	int		i;
 
-	i = 0;
-	fd = open("test.txt", O_RDONLY);
-	line = get_next_line(fd);
-	printf("%s", line);
-	while (line)
-	{
-		free(line);
-		line = get_next_line(fd);
-		printf("%s", line);
-	}
-	free(line);
-	close(fd);
-	return (0);
-}
+// 	i = 0;
+// 	fd = open("bible.txt", O_RDONLY);
+// 	while (1)
+// 	{
+// 		line = get_next_line(fd);
+// 		if (!line)
+// 			break ;
+// 		printf("line '%s'\n", line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }

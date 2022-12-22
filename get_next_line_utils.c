@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:52 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/22 09:15:39 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2022/12/22 17:08:53 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,62 +22,35 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
-size_t	ft_linelen(char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i] && str[i] == '\n')
-		i++;
-	return (i);
-}
-
-char	*ft_strncat(char *dest, char *src)
-{
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	while (dest[i] != '\0')
-		i++;
-	j = 0;
-	while (src[j] != '\0')
-	{
-		dest[i] = src[j];
-		i++;
-		j++;
-	}
-	dest[i] = '\0';
-	return (dest);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strnjoin(char *s1, char *s2, ssize_t n)
 {
 	char	*str;
+	size_t	len;
+	int		i;
+	int		k;
 
 	if (!s1 || !s2)
 		return (NULL);
-	str = malloc (sizeof(char) * (ft_strlen(s1) + ft_strlen(s2)) + 1);
+	len = ft_strlen(s1);
+	str = malloc (sizeof(char) * (ft_strlen(s1) + n + 1));
 	if (!str)
 		return (NULL);
-	*str = '\0';
-	ft_strncat(str, s1);
-	return (ft_strncat(str, s2));
+	i = -1;
+	while (s1[++i])
+		str[i] = s1[i];
+	k = 0;
+	while (s2[k] && k < n)
+		str[i++] = s2[k++];
+	return (str[i] = '\0', free(s1), str);
 }
 
 ssize_t	ft_strchr(char *s, int c)
 {
-	size_t	len;
 	size_t	i;
 
-	i = 0;
-	len = ft_strlen(s) + 1;
-	while (len)
-	{
+	i = -1;
+	while (s[++i])
 		if (s[i] == c)
-			return (1);
-		i++;
-		len--;
-	}
-	return (0);
+			return (i);
+	return (-1);
 }
