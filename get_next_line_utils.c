@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:52 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/22 19:06:06 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 15:55:39 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ char	*ft_strnjoin(char *s1, char *s2, ssize_t n)
 
 	if (!s1 || !s2)
 		return (NULL);
-	str = malloc (sizeof(char) * (ft_strlen(s1) + n + 2));
+	str = malloc (sizeof(char) * (ft_strlen(s1) + n) + 1);
 	if (!str)
-		return (NULL);
+		return (free(s1), NULL);
 	i = -1;
 	while (s1[++i])
 		str[i] = s1[i];
@@ -46,9 +46,12 @@ ssize_t	ft_strchr(char *s, int c)
 {
 	ssize_t	i;
 
-	i = -1;
-	while (s[++i])
+	i = 0;
+	while (s[i])
+	{
 		if (s[i] == c)
 			return (i);
+		i++;
+	}
 	return (-1);
 }
