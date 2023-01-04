@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2022/12/22 17:10:22 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2023/01/04 10:00:40 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,34 @@ void	clear_buff(char *buff)
 	buff[i] = '\0';
 }
 
-// char	*get_line(char *line, char *stash)
-// {
-// }
+char	*get_line(char *buff, ssize_t cursor, char *line, int fd)
+{
+	while (cursor)
+	{
+		if (buff[0] == 0)
+		{
+			cursor = read(fd, buff, BUFFERSIZE);
+			if (cursor == -1)
+				return (NULL);
+			buff[cursor] = '\0';
+		}
+		if (ft_strchr(buff, '\n') == -1 && ft_strchr(line, '\n') == -1
+			&& cursor != 0)
+		{
+			line = ft_strnjoin(line, buff, BUFFERSIZE);
+			if (!line)
+				return (NULL);
+			buff[0] = '\0';
+			continue ;
+		}
+		line = ft_strnjoin(line, buff, ft_strchr(buff, '\n'));
+		if (!line)
+			return (free(line), NULL);
+		clear_buff(buff);
+		return (line);
+	}
+	return (free(line), NULL);
+}
 
 char	*get_next_line(int fd)
 {
@@ -44,51 +69,29 @@ char	*get_next_line(int fd)
 	if (!line)
 		return (NULL);
 	line[0] = '\0';
-	while (cursor)
-	{
-		if (buff[0] == 0)
-		{
-			cursor = read(fd, buff, BUFFERSIZE);
-			if (cursor == -1)
-				return (NULL);
-			buff[cursor] = '\0';
-		}
-		if (ft_strchr(buff, '\n') == -1 && ft_strchr(line, '\n') == -1)
-		{
-			line = ft_strnjoin(line, buff, BUFFERSIZE);
-			if (!line)
-				return (NULL);
-			buff[0] = '\0';
-			continue ;
-		}
-		line = ft_strnjoin(line, buff, ft_strchr(buff, '\n'));
-		if (!line)
-			return (free(line), NULL);
-		clear_buff(buff);
-		return (line);
-	}
+	line = get_line(buff, cursor, line, fd);
+	if (!line)
+		return (NULL);
 	if (line[0] == 0)
-		return (free(line), NULL);
+		return (NULL);
 	else
 		return (line);
 }
 
-// int	main(void)
-// {
-// 	int		fd;
-// 	char	*line;
-// 	int		i;
+int	main(void)
+{
+	int		fd;
+	char	*line;
 
-// 	i = 0;
-// 	fd = open("bible.txt", O_RDONLY);
-// 	while (1)
-// 	{
-// 		line = get_next_line(fd);
-// 		if (!line)
-// 			break ;
-// 		printf("line '%s'\n", line);
-// 		free(line);
-// 	}
-// 	close(fd);
-// 	return (0);
-// }
+	fd = open("test.txt", O_RDONLY);
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (!line)
+			break ;
+		printf("%s", line);
+		free(line);
+	}
+	close(fd);
+	return (0);
+}
