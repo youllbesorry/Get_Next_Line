@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:52 by bfaure            #+#    #+#             */
-/*   Updated: 2023/01/04 16:29:55 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2023/01/05 16:46:55 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ size_t	ft_strlen(char *str)
 {
 	size_t	i;
 
+	if (!str)
+		return (0);
 	i = 0;
 	while (str[i])
 		i++;
@@ -29,8 +31,8 @@ char	*ft_strnjoin(char *s1, char *s2, ssize_t n)
 	int		k;
 
 	if (!s1 || !s2)
-		return (NULL);
-	str = ft_calloc((ft_strlen(s1) + n), sizeof(char));
+		return (free(s1), NULL);
+	str = ft_calloc((ft_strlen(s1) + ft_strlen(s2)) + 1, sizeof(char));
 	if (!str)
 		return (free(s1), NULL);
 	i = -1;
