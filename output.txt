@@ -1,7 +1,5 @@
-aaaaaaaaaa.
-bbbbbbbbbb..
+aaaaaaaaaa
+bbbbbbbbbb
 
-cccccccccc...
-
-dddddddddd....
-(null)
+cccccccccc
+dddddddddd

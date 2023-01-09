@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2023/01/09 15:07:22 by bfaure           ###   ########lyon.fr   */
+/*   Created: 2023/01/09 14:38:58 by bfaure            #+#    #+#             */
+/*   Updated: 2023/01/09 14:57:09 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	clear_buff(char *buff)
 {
@@ -27,7 +27,7 @@ void	clear_buff(char *buff)
 	buff[i] = '\0';
 }
 
-char	*ft_get_line(char *buff, ssize_t cursor, char *line, int fd)
+char	*line_get(char *buff, ssize_t cursor, char *line, int fd)
 {
 	while (cursor)
 	{
@@ -55,22 +55,22 @@ char	*ft_get_line(char *buff, ssize_t cursor, char *line, int fd)
 
 char	*get_next_line(int fd)
 {
-	static char	buff[BUFFER_SIZE + 1];
+	static char	buff[OPEN_MAX][BUFFER_SIZE + 1];
 	ssize_t		cursor;
 	char		*line;
 
 	cursor = 1;
-	if (fd < 0 || read(fd, 0, 0) == -1 || BUFFER_SIZE < 1)
-		return (clear_buff(buff), NULL);
+	if (fd < 0 || read(fd, 0, 0) == -1 || BUFFER_SIZE < 1 || fd >= OPEN_MAX)
+		return (clear_buff(buff[0]), NULL);
 	line = malloc(sizeof(char) * 0);
 	if (!line)
-		return (clear_buff(buff), free(line), NULL);
+		return (clear_buff(buff[fd]), free(line), NULL);
 	line[0] = '\0';
-	line = ft_get_line(buff, cursor, line, fd);
+	line = line_get(buff[fd], cursor, line, fd);
 	if (!line)
-		return (clear_buff(buff), free(line), NULL);
+		return (clear_buff(buff[fd]), free(line), NULL);
 	if (line[0] == 0)
-		return (clear_buff(buff), free(line), NULL);
+		return (clear_buff(buff[fd]), free(line), NULL);
 	else
 		return (line);
 }
