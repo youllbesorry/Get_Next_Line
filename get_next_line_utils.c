@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:52 by bfaure            #+#    #+#             */
-/*   Updated: 2023/01/05 16:46:55 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2023/01/09 12:53:19 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ char	*ft_strnjoin(char *s1, char *s2, ssize_t n)
 
 	if (!s1 || !s2)
 		return (free(s1), NULL);
-	str = ft_calloc((ft_strlen(s1) + ft_strlen(s2)) + 1, sizeof(char));
+	str = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	if (!str)
-		return (free(s1), NULL);
+		return (clear_buff(s2), free(s1), NULL);
 	i = -1;
 	while (s1[++i])
 		str[i] = s1[i];

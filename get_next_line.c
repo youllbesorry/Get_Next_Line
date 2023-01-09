@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/16 09:24:58 by bfaure            #+#    #+#             */
-/*   Updated: 2023/01/05 16:50:25 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2023/01/09 13:27:32 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,26 +34,23 @@ char	*line_get(char *buff, ssize_t cursor, char *line, int fd)
 		if (buff[0] == 0)
 		{
 			cursor = read(fd, buff, BUFFER_SIZE);
-			if (cursor == -1)
-				return (free(line), NULL);
+			if (cursor < 0)
+				return (clear_buff(buff), free(line), NULL);
 			buff[cursor] = '\0';
 		}
-		if (ft_strchr(buff, '\n') == -1 && ft_strchr(line, '\n') == -1
-			&& cursor > 0)
+		if (ft_strchr(buff, '\n') > -1 || cursor == 0)
 		{
-			line = ft_strnjoin(line, buff, BUFFER_SIZE);
+			line = ft_strnjoin(line, buff, ft_strchr(buff, '\n'));
 			if (!line)
-				return (free(line), NULL);
-			buff[0] = '\0';
-			continue ;
+				return (clear_buff(buff), free(line), NULL);
+			return (clear_buff(buff), line);
 		}
-		line = ft_strnjoin(line, buff, ft_strchr(buff, '\n'));
+		line = ft_strnjoin(line, buff, BUFFER_SIZE);
 		if (!line)
-			return (free(line), NULL);
-		clear_buff(buff);
-		return (line);
+			return (clear_buff(buff), free(line), NULL);
+		buff[0] = '\0';
 	}
-	return (free(line), NULL);
+	return (clear_buff(buff), free(line), NULL);
 }
 
 char	*get_next_line(int fd)
@@ -63,17 +60,17 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	cursor = 1;
-	if (fd < 0 || read(fd, 0, 0) > 0 || BUFFER_SIZE < 1)
-		return (*buff = 0, NULL);
-	line = ft_calloc(0, (sizeof (char)));
+	if (fd < 0 || read(fd, 0, 0) == -1 || BUFFER_SIZE < 1)
+		return (clear_buff(buff), NULL);
+	line = malloc(sizeof(char) * 0);
 	if (!line)
-		return (free(line), NULL);
+		return (clear_buff(buff), free(line), NULL);
 	line[0] = '\0';
 	line = line_get(buff, cursor, line, fd);
 	if (!line)
-		return (free(line), NULL);
+		return (clear_buff(buff), free(line), NULL);
 	if (line[0] == 0)
-		return (NULL);
+		return (clear_buff(buff), free(line), NULL);
 	else
 		return (line);
 }
