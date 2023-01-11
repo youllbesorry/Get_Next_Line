@@ -6,7 +6,7 @@
 /*   By: bfaure <bfaure@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/09 14:38:58 by bfaure            #+#    #+#             */
-/*   Updated: 2023/01/09 14:57:09 by bfaure           ###   ########lyon.fr   */
+/*   Updated: 2023/01/11 11:10:06 by bfaure           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*get_next_line(int fd)
 
 	cursor = 1;
 	if (fd < 0 || read(fd, 0, 0) == -1 || BUFFER_SIZE < 1 || fd >= OPEN_MAX)
-		return (clear_buff(buff[0]), NULL);
+		return (NULL);
 	line = malloc(sizeof(char) * 0);
 	if (!line)
 		return (clear_buff(buff[fd]), free(line), NULL);
